@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <shaders/shaders.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 float position[6] = {
     0.0f,  0.5f,    // top
@@ -13,21 +14,6 @@ float position[6] = {
 void processInput(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
-const char *VertexShaderSource = "#version 330 core\n"
-                                 "layout (location = 0) in vec4 position;\n"
-                                 "void main()\n"
-                                 "{\n"
-                                 "   gl_Position = position;\n"
-                                 "}\0";
-
-const char *FragmentShaderSource = "#version 330 core\n"
-                                   "\n"
-                                   "layout (location = 0) out vec4 color;"
-                                   "\n"
-                                   "void main()\n"
-                                   "{\n"
-                                   "   color = vec4(1.0, 0.0, 0.0, 1.0);\n"
-                                   "}\0";
 
 int main(void) {
   // initialize a GLFW window
@@ -66,8 +52,12 @@ int main(void) {
                         (const void *)0);
   glEnableVertexAttribArray(0);
 
-  unsigned int shader = CreateShader(VertexShaderSource, FragmentShaderSource);
+  ShaderProgramSource source = ParseShader("resource/shaders/Basic.shader");
+  unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
   glUseProgram(shader);
+
+  if (source.VertexSource) free(source.VertexSource);
+  if (source.FragmentSource) free(source.FragmentSource);
 
   while (!glfwWindowShouldClose(window)) {
     // input
