@@ -2,56 +2,53 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#include <shaders/shaders.h>
 #include <stdlib.h>
 #include <string.h>
-#include <shaders/shaders.h>
 
-enum ShaderType {
-    NONE = -1,
-    VERTEX = 0,
-    FRAGMENT = 1
-};
+enum ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
 
-ShaderProgramSource ParseShader(const char* filepath) {
-    FILE* file = fopen(filepath, "r");
-    ShaderProgramSource source = {NULL, NULL};
-    if (!file) {
-        printf("Failed to open shader file: %s\n", filepath);
-        return source;
-    }
-
-    enum ShaderType type = NONE;
-    char* lines[2] = {NULL, NULL};
-    size_t lengths[2] = {0, 0};
-
-    char line[512];
-    while (fgets(line, sizeof(line), file)) {
-        if (strstr(line, "#shader") != NULL) {
-            if (strstr(line, "vertex") != NULL) {
-                type = VERTEX;
-            } else if (strstr(line, "fragment") != NULL) {
-                type = FRAGMENT;
-            }
-        } else {
-            if (type != NONE) {
-                size_t lineLength = strlen(line);
-                if (lines[type] == NULL) {
-                    lines[type] = (char*)malloc(lineLength + 1);
-                    strcpy(lines[type], line);
-                    lengths[type] = lineLength;
-                } else {
-                    lines[type] = (char*)realloc(lines[type], lengths[type] + lineLength + 1);
-                    strcat(lines[type], line);
-                    lengths[type] += lineLength;
-                }
-            }
-        }
-    }
-    
-    fclose(file);
-    source.VertexSource = lines[VERTEX];
-    source.FragmentSource = lines[FRAGMENT];
+ShaderProgramSource ParseShader(const char *filepath) {
+  FILE *file = fopen(filepath, "r");
+  ShaderProgramSource source = {NULL, NULL};
+  if (!file) {
+    printf("Failed to open shader file: %s\n", filepath);
     return source;
+  }
+
+  enum ShaderType type = NONE;
+  char *lines[2] = {NULL, NULL};
+  size_t lengths[2] = {0, 0};
+
+  char line[512];
+  while (fgets(line, sizeof(line), file)) {
+    if (strstr(line, "#shader") != NULL) {
+      if (strstr(line, "vertex") != NULL) {
+        type = VERTEX;
+      } else if (strstr(line, "fragment") != NULL) {
+        type = FRAGMENT;
+      }
+    } else {
+      if (type != NONE) {
+        size_t lineLength = strlen(line);
+        if (lines[type] == NULL) {
+          lines[type] = (char *)malloc(lineLength + 1);
+          strcpy(lines[type], line);
+          lengths[type] = lineLength;
+        } else {
+          lines[type] =
+              (char *)realloc(lines[type], lengths[type] + lineLength + 1);
+          strcat(lines[type], line);
+          lengths[type] += lineLength;
+        }
+      }
+    }
+  }
+
+  fclose(file);
+  source.VertexSource = lines[VERTEX];
+  source.FragmentSource = lines[FRAGMENT];
+  return source;
 }
 
 unsigned int compileShader(unsigned int type, const char *source[]) {
