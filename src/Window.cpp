@@ -1,7 +1,7 @@
 
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
-#include <GlError/glError.h>
+#include <Renderer.hpp>
 #include <Window.hpp>
 #include <iostream>
 

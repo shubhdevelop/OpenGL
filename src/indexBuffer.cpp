@@ -1,5 +1,5 @@
-#include <GlError/glError.h>
 #include <IndexBuffer.hpp>
+#include <Renderer.hpp>
 #include <glad/glad.h>
 
 IndexBuffer::IndexBuffer(const unsigned int *data, unsigned int count)

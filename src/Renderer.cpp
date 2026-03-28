@@ -1,5 +1,5 @@
 #include "glad/glad.h"
-#include <GlError/glError.h>
+#include <Renderer.hpp>
 #include <stdbool.h>
 #include <stdio.h>
 

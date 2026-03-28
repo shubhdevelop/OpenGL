@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GlError/glError.h>
+#include <Renderer.hpp>
 #include <glad/glad.h>
 #include <vector>
 
@@ -33,8 +33,7 @@ private:
 public:
   VertexBufferLayout() : m_Stride(0) {};
 
-  template <typename T>
-  void Push(unsigned int count) {
+  template <typename T> void Push(unsigned int count) {
     static_assert(sizeof(T) == 0, "Unsupported type");
   }
 
@@ -44,8 +43,7 @@ public:
   inline unsigned int GetStride() const { return m_Stride; }
 };
 
-template <>
-inline void VertexBufferLayout::Push<float>(unsigned int count) {
+template <> inline void VertexBufferLayout::Push<float>(unsigned int count) {
   m_Elements.push_back({GL_FLOAT, count, GL_FALSE});
   m_Stride += VertexBufferElement::GetSizeByType(GL_FLOAT) * count;
 }

@@ -4,8 +4,8 @@
 #include <glad/glad.h>
 // IMPORTANT: GLAD must come before GLFW
 #include <GLFW/glfw3.h>
-#include <GlError/glError.h>
 #include <IndexBuffer.hpp>
+#include <Renderer.hpp>
 #include <Shader.hpp>
 #include <VertexArray.hpp>
 #include <stdio.h>
