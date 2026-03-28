@@ -1,5 +1,5 @@
 # Compiler
-CC = gcc
+CC = g++
 
 # Directories
 SRC_DIR = src
@@ -7,14 +7,14 @@ BUILD_DIR = build
 INCLUDE_DIR = include
 
 # Files
-SRC = $(wildcard $(SRC_DIR)/*.c)
-OBJ = $(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+SRC = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
 # Output
 TARGET = $(BUILD_DIR)/app
 
 # Flags
-CFLAGS = -Wall -Wextra -std=c11 -I$(INCLUDE_DIR)
+CFLAGS = -Wall -Wextra -std=c++11 -I$(INCLUDE_DIR)
 CFLAGS += -I/usr/include
 CFLAGS += -I/usr/local/include
 
@@ -35,7 +35,7 @@ $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $@ $(LIBS)
 
 # Compile
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -45,6 +45,6 @@ clean:
 
 # Run
 run: all
-	./$(TARGET)
+	__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia ./$(TARGET)
 
 .PHONY: all clean run
