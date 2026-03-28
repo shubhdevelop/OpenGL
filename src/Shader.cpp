@@ -12,14 +12,15 @@ Shader::Shader(const char *filepath) {
 }
 
 Shader::~Shader() { GLCall(glDeleteProgram(m_rendererId)) }
-void Shader::Bind() { GLCall(glUseProgram(m_rendererId)); }
-void Shader::UnBind() { GLCall(glUseProgram(0)); }
+void Shader::Bind() const { GLCall(glUseProgram(m_rendererId)); }
+void Shader::UnBind() const { GLCall(glUseProgram(0)); }
 
-unsigned int Shader::GetUniformLocation(const char *name) {
-  if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end())
-    return m_uniformLocationCache[name];
+unsigned int Shader::GetUniformLocation(const char *name) const {
+  auto it = m_uniformLocationCache.find(name);
+  if (it != m_uniformLocationCache.end())
+    return it->second;
   GLCall(unsigned int location = glGetUniformLocation(m_rendererId, name));
-  if (location < 0) {
+  if (location == -1) {
     std::cout << "Warning: uniform: " << name << "doesn't exist";
   } else {
     m_uniformLocationCache[name] = location;
@@ -28,7 +29,7 @@ unsigned int Shader::GetUniformLocation(const char *name) {
 };
 
 void Shader::SetUniform4f(const char *name, float v0, float v1, float v2,
-                          float v3) {
+                          float v3) const {
   GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
 };
 

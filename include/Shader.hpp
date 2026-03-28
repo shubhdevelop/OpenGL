@@ -14,15 +14,15 @@ class Shader {
 private:
   unsigned int m_rendererId;
   const char *filepath;
-  std::unordered_map<std::string, unsigned int> m_uniformLocationCache;
+  mutable std::unordered_map<std::string, unsigned int> m_uniformLocationCache;
 
 public:
   Shader(const char *filepath);
   ~Shader();
-  void Bind();
-  void UnBind();
-  void SetUniform4f(const char *name, float v0, float v1, float v2, float v3);
-  unsigned int GetUniformLocation(const char *name);
+  void Bind() const;
+  void UnBind() const;
+  void SetUniform4f(const char *name, float v0, float v1, float v2, float v3) const;
+  unsigned int GetUniformLocation(const char *name) const;
 
 private:
   ShaderProgramSource ParseShader(const char *filepath);

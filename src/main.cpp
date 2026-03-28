@@ -1,6 +1,6 @@
-#include "Shader.hpp"
-#include "VertexBufferLayout.hpp"
-#include "Window.hpp"
+#include <Shader.hpp>
+#include <VertexBufferLayout.hpp>
+#include <Window.hpp>
 #include <glad/glad.h>
 // IMPORTANT: GLAD must come before GLFW
 #include <GLFW/glfw3.h>

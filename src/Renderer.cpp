@@ -1,5 +1,8 @@
-#include "glad/glad.h"
+#include <IndexBuffer.hpp>
 #include <Renderer.hpp>
+#include <Shader.hpp>
+#include <VertexArray.hpp>
+#include <glad/glad.h>
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -16,4 +19,13 @@ bool GLLogCall(const char *function, const char *file, int line) {
     return false;
   }
   return true;
+}
+
+void Renderer::Draw(const VertexArray &va, const IndexBuffer &ib,
+                    const Shader &shader) const {
+  shader.Bind();
+  shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.7f, 0.8f);
+  va.Bind();
+  ib.Bind();
+  GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL));
 }

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <IndexBuffer.hpp>
+#include <Shader.hpp>
+#include <VertexArray.hpp>
 #include <signal.h>
 #include <stdbool.h>
 
@@ -15,3 +18,11 @@
 void GLClearError();
 
 bool GLLogCall(const char *function, const char *file, int line);
+
+class Renderer {
+public:
+  Renderer();
+  ~Renderer();
+  void Draw(const VertexArray &va, const IndexBuffer &ib,
+            const Shader &shader) const;
+};
