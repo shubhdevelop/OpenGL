@@ -1,7 +1,9 @@
 #include <glad/glad.h>
 // IMPORTANT: GLAD must come before GLFW
 #include <GLFW/glfw3.h>
+#include <GlError/glError.h>
 #include <shaders/shaders.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -78,7 +80,7 @@ int main(void) {
     // rendering command
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL));
 
     glfwSwapBuffers(window);
     glfwPollEvents();
