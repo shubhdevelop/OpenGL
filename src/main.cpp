@@ -26,6 +26,7 @@ int main(void) {
     window.HandleWindowResize();
     window.PrintInfo();
 
+    GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     VertexArray va;
