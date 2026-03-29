@@ -1,5 +1,6 @@
-#include "Texture.hpp"
+#include "glm/ext/matrix_clip_space.hpp"
 #include <Shader.hpp>
+#include <Texture.hpp>
 #include <VertexBufferLayout.hpp>
 #include <Window.hpp>
 #include <glad/glad.h>
@@ -9,6 +10,7 @@
 #include <Renderer.hpp>
 #include <Shader.hpp>
 #include <VertexArray.hpp>
+#include <glm/glm.hpp>
 #include <stdlib.h>
 
 float positions[16] = {
@@ -37,23 +39,28 @@ int main(void) {
     layout.Push<float>(2);
     va.AddBuffer(vb, layout);
 
+    glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
     Shader shader("resource/shaders/Basic.shader");
     shader.Bind();
-    // shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.7f, 0.8f);
+
+    shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.7f, 0.8f);
+    shader.SetUniformMat4f("u_MVP", proj);
 
     Texture Texture("resource/pp.jpg");
     Texture.Bind(0);
     shader.SetUniform1i("u_Texture", 0);
 
     va.Unbind();
-    shader.UnBind();
     vb.Unbind();
     ib.Unbind();
+    shader.UnBind();
+
+    Renderer renderer;
 
     float r = 0.0f;
     float increment = 0.05f;
 
-    Renderer renderer;
     while (!window.ShouldClose()) {
       window.ProcessInput();
       renderer.Clear();
