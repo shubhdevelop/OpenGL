@@ -21,7 +21,9 @@ public:
   ~Shader();
   void Bind() const;
   void UnBind() const;
-  void SetUniform4f(const char *name, float v0, float v1, float v2, float v3) const;
+  void SetUniform4f(const char *name, float v0, float v1, float v2,
+                    float v3) const;
+  void SetUniform1i(const char *name, int v0) const;
   unsigned int GetUniformLocation(const char *name) const;
 
 private:

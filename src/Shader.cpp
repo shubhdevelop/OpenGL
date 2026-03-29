@@ -19,7 +19,7 @@ unsigned int Shader::GetUniformLocation(const char *name) const {
   auto it = m_uniformLocationCache.find(name);
   if (it != m_uniformLocationCache.end())
     return it->second;
-  GLCall(unsigned int location = glGetUniformLocation(m_rendererId, name));
+  GLCall(int location = glGetUniformLocation(m_rendererId, name));
   if (location == -1) {
     std::cout << "Warning: uniform: " << name << "doesn't exist";
   } else {
@@ -31,6 +31,10 @@ unsigned int Shader::GetUniformLocation(const char *name) const {
 void Shader::SetUniform4f(const char *name, float v0, float v1, float v2,
                           float v3) const {
   GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+};
+
+void Shader::SetUniform1i(const char *name, int v0) const {
+  GLCall(glUniform1i(GetUniformLocation(name), v0));
 };
 
 ShaderProgramSource Shader::ParseShader(const char *filepath) {

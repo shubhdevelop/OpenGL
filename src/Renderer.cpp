@@ -24,8 +24,9 @@ bool GLLogCall(const char *function, const char *file, int line) {
 void Renderer::Draw(const VertexArray &va, const IndexBuffer &ib,
                     const Shader &shader) const {
   shader.Bind();
-  shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.7f, 0.8f);
   va.Bind();
   ib.Bind();
-  GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL));
+  GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, NULL));
 }
+
+void Renderer::Clear() const { GLCall(glClear(GL_COLOR_BUFFER_BIT)); }

@@ -1,3 +1,4 @@
+#include "Texture.hpp"
 #include <Shader.hpp>
 #include <VertexBufferLayout.hpp>
 #include <Window.hpp>
@@ -11,31 +12,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-float positions[8] = {
-    -0.5f, -0.5f, // bottom left
-    0.5f,  -0.5f, // bottom right
-    0.5f,  0.5f,  // top
-    -0.5f, 0.5f,  // top left
+float positions[16] = {
+    -0.5f, -0.5f, 0.0f, 0.0f, // bottom left
+    0.5f,  -0.5f, 1.0f, 0.0f, // bottom right
+    0.5f,  0.5f,  1.0f, 1.0f, // top
+    -0.5f, 0.5f,  0.0f, 1.0f  // top left
 };
 
 unsigned int indices[6] = {0, 1, 2, 2, 3, 0};
 
 int main(void) {
   {
-    Window w(800, 600, "OpenGl Window");
-    w.HandleWindowResize();
-    w.PrintInfo();
+    Window window(800, 600, "OpenGl Window");
+    window.HandleWindowResize();
+    window.PrintInfo();
+
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     VertexArray va;
-    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+    VertexBuffer vb(positions, 4 * 4 * sizeof(float));
     IndexBuffer ib(indices, 6);
     VertexBufferLayout layout;
+    layout.Push<float>(2);
     layout.Push<float>(2);
     va.AddBuffer(vb, layout);
 
     Shader shader("resource/shaders/Basic.shader");
     shader.Bind();
-    shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.7f, 0.8f);
+    // shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.7f, 0.8f);
+
+    Texture Texture("resource/pp.jpg");
+    Texture.Bind(0);
+    shader.SetUniform1i("u_Texture", 0);
 
     va.Unbind();
     shader.UnBind();
@@ -45,15 +53,13 @@ int main(void) {
     float r = 0.0f;
     float increment = 0.05f;
 
-    while (!w.ShouldClose()) {
-      w.ProcessInput();
-
-      GLCall(glClear(GL_COLOR_BUFFER_BIT));
+    Renderer renderer;
+    while (!window.ShouldClose()) {
+      window.ProcessInput();
+      renderer.Clear();
       shader.Bind();
-      shader.SetUniform4f("u_Color", r, 0.3f, 0.7f, 0.8f);
-      va.Bind();
-      ib.Bind();
-      GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL));
+      // shader.SetUniform4f("u_Color", r, 0.3f, 0.7f, 0.8f);
+      renderer.Draw(va, ib, shader);
 
       if (r > 1.0f) {
         increment = -0.01f;
@@ -62,8 +68,8 @@ int main(void) {
       }
       r += increment;
 
-      w.SwapBuffer();
-      w.PollEvents();
+      window.SwapBuffer();
+      window.PollEvents();
     }
   }
   return 0;
