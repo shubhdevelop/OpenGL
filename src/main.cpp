@@ -9,7 +9,6 @@
 #include <Renderer.hpp>
 #include <Shader.hpp>
 #include <VertexArray.hpp>
-#include <stdio.h>
 #include <stdlib.h>
 
 float positions[16] = {
