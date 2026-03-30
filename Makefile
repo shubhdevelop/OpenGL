@@ -8,6 +8,7 @@ INCLUDE_DIR = include
 
 # Files
 SRC = $(wildcard $(SRC_DIR)/*.cpp)
+SRC += $(wildcard $(SRC_DIR)/tests/*.cpp)
 SRC += $(wildcard $(INCLUDE_DIR)/imgui/*.cpp)
 OBJ = $(SRC:%.cpp=$(BUILD_DIR)/%.o)
 
