@@ -45,20 +45,16 @@ int main(void) {
     layout.Push<float>(2);
     va.AddBuffer(vb, layout);
 
+    float viewX = -100, viewY = 0, viewZ = 0;
+    float modelX = 200, modelY = 100, modelZ = 0;
+
     // Projection;
     glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
     // Camera positions;
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-    // Camera positions rotation and movement and scale;
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 100, 0));
-
     Shader shader("resource/shaders/Basic.shader");
     shader.Bind();
 
     // doing the matrix multiplication on the gpu should be faster!!
-    shader.SetUniformMat4f("u_Proj", proj);
-    shader.SetUniformMat4f("u_View", view);
-    shader.SetUniformMat4f("u_Model", model);
 
     Texture Texture("resource/pp.jpg");
     Texture.Bind(0);
@@ -81,16 +77,34 @@ int main(void) {
         ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
     // Setup Dear ImGui style
+
+    ImGui_ImplGlfw_InitForOpenGL(window.getWindow(), true);
+    ImGui_ImplOpenGL3_Init("#version 330");
     ImGui::StyleColorsDark();
 
+    glm::vec3 translationView(200, 200, 0);
+    glm::vec3 translationModel(200, 200, 0);
     float r = 0.0f;
     float increment = 0.05f;
 
     while (!window.ShouldClose()) {
       window.ProcessInput();
       renderer.Clear();
+
+      // ImGuiStuff
+      ImGui_ImplOpenGL3_NewFrame();
+      ImGui_ImplGlfw_NewFrame();
+      ImGui::NewFrame();
+
       shader.Bind();
       // shader.SetUniform4f("u_Color", r, 0.3f, 0.7f, 0.8f);
+      glm::mat4 view = glm::translate(glm::mat4(1.0f), translationView);
+      // Camera positions rotation and movement and scale;
+      glm::mat4 model = glm::translate(glm::mat4(1.0f), translationModel);
+
+      shader.SetUniformMat4f("u_Proj", proj);
+      shader.SetUniformMat4f("u_View", view);
+      shader.SetUniformMat4f("u_Model", model);
       renderer.Draw(va, ib, shader);
 
       if (r > 1.0f) {
@@ -99,10 +113,28 @@ int main(void) {
         increment = 0.01f;
       }
       r += increment;
+      {
+        ImGui::Begin("Hello, world!"); // Create a window called "Hello, world!"
+                                       // and append into it.
+        ImGui::SliderFloat3(
+            "ViewTransaltion", &translationView.x, 0.0f,
+            960.0f); // Edit 1 float using a slider from 0.0f to 1.0f
+        ImGui::SliderFloat3(
+            "ModelTranslation", &translationModel.x, 0.0f,
+            540.0f); // Edit 1 float using a slider from 0.0f to 1.0f
+        ImGui::End();
+      }
+
+      ImGui::Render();
+      ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
       window.SwapBuffer();
       window.PollEvents();
     }
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
   }
+
   return 0;
 }
