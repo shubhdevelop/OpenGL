@@ -1,17 +1,22 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
+#include "imgui/imgui_impl_glfw.h"
 #include <Shader.hpp>
 #include <Texture.hpp>
 #include <VertexBufferLayout.hpp>
 #include <Window.hpp>
 #include <glad/glad.h>
 // IMPORTANT: GLAD must come before GLFW
-#include <GLFW/glfw3.h>
 #include <IndexBuffer.hpp>
 #include <Renderer.hpp>
 #include <Shader.hpp>
 #include <VertexArray.hpp>
 #include <glm/glm.hpp>
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+// GLFW needs to be after
+#include <GLFW/glfw3.h>
 #include <stdlib.h>
 
 float positions[16] = {
@@ -40,8 +45,8 @@ int main(void) {
     layout.Push<float>(2);
     va.AddBuffer(vb, layout);
 
+    // Projection;
     glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-
     // Camera positions;
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
     // Camera positions rotation and movement and scale;
@@ -65,6 +70,18 @@ int main(void) {
     shader.UnBind();
 
     Renderer renderer;
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |=
+        ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |=
+        ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
 
     float r = 0.0f;
     float increment = 0.05f;
