@@ -8,13 +8,14 @@ INCLUDE_DIR = include
 
 # Files
 SRC = $(wildcard $(SRC_DIR)/*.cpp)
-OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+SRC += $(wildcard $(INCLUDE_DIR)/imgui/*.cpp)
+OBJ = $(SRC:%.cpp=$(BUILD_DIR)/%.o)
 
 # Output
 TARGET = $(BUILD_DIR)/app
 
 # Flags
-CFLAGS = -Wall -Wextra -std=c++11 -I$(INCLUDE_DIR)
+CFLAGS = -Wall -Wextra -std=c++11 -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/imgui
 CFLAGS += -I/usr/include
 CFLAGS += -I/usr/local/include
 
@@ -35,8 +36,8 @@ $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $@ $(LIBS)
 
 # Compile
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(BUILD_DIR)
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Clean

@@ -1,20 +1,20 @@
 [
   {
     "arguments": [
-      "/usr/bin/gcc",
+      "/usr/bin/g++",
       "-Wall",
       "-Wextra",
-      "-std=c11",
+      "-std=c++11",
       "-Iinclude",
       "-I/usr/include",
       "-I/usr/local/include",
       "-c",
       "-o",
       "build/main.o",
-      "src/main.c"
+      "src/main.cpp"
     ],
     "directory": "/home/shubham/Desktop/openGl",
-    "file": "/home/shubham/Desktop/openGl/src/main.c",
+    "file": "/home/shubham/Desktop/openGl/src/main.cpp",
     "output": "/home/shubham/Desktop/openGl/build/main.o"
   }
 ]
