@@ -1,13 +1,14 @@
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <imgui/imgui_impl_glfw.h>
-#include <tests/WaterEffect.hpp>
+#include <tests/CubeGeo.hpp>
 #include <Shader.hpp>
 #include <Texture.hpp>
 #include <VertexBufferLayout.hpp>
 #include <Window.hpp>
 #include <glad/glad.h>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <imgui/imgui_impl_glfw.h>
 #include <tests/TestE2E.hpp>
+#include <tests/WaterEffect.hpp>
 // IMPORTANT: GLAD must come before GLFW
 #include <IndexBuffer.hpp>
 #include <Renderer.hpp>
@@ -29,6 +30,7 @@ int main(void) {
 
     // Enable GL_BLENDING
     GLCall(glEnable(GL_BLEND));
+    GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     Renderer renderer;
@@ -48,6 +50,7 @@ int main(void) {
 
     test::TestE2E e2eTest;
     test::WaterEffect waterEffect;
+    test::CubeGeo CubeGeo;
 
     while (!window.ShouldClose()) {
       window.ProcessInput();
@@ -58,9 +61,9 @@ int main(void) {
       ImGui_ImplGlfw_NewFrame();
       ImGui::NewFrame();
       // waterEffect
-      waterEffect.onUpdate(0.0f);
-      waterEffect.onRender();
-      waterEffect.onImGuiRender();
+      CubeGeo.onUpdate(0.0f);
+      CubeGeo.onRender();
+      CubeGeo.onImGuiRender();
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

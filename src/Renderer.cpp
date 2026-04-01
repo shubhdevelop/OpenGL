@@ -29,4 +29,4 @@ void Renderer::Draw(const VertexArray &va, const IndexBuffer &ib,
   GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, NULL));
 }
 
-void Renderer::Clear() const { GLCall(glClear(GL_COLOR_BUFFER_BIT)); }
+void Renderer::Clear() const { GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)); }
