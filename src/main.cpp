@@ -52,7 +52,9 @@ int main(void)
 
     test::TestE2E e2eTest;
     test::WaterEffect waterEffect;
-    test::CubeGeo CubeGeo;
+    test::CubeGeo cubeGeo;
+
+    int currentTest = 2; // 0=E2E, 1=Water, 2=Cube
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 
@@ -70,10 +72,25 @@ int main(void)
       ImGui_ImplOpenGL3_NewFrame();
       ImGui_ImplGlfw_NewFrame();
       ImGui::NewFrame();
-      // waterEffect
-      CubeGeo.onUpdate(deltaTime);
-      CubeGeo.onRender();
-      CubeGeo.onImGuiRender();
+
+      ImGui::Begin("Test Selector");
+      const char* items[] = { "E2E Test", "Water Effect", "Cube Geo" };
+      ImGui::Combo("Select Test", &currentTest, items, 3);
+      ImGui::End();
+
+      renderer.Clear();
+
+      if (currentTest == 0) {
+        e2eTest.onRender();
+        e2eTest.onImGuiRender();
+      } else if (currentTest == 1) {
+        waterEffect.onRender();
+        waterEffect.onImGuiRender();
+      } else if (currentTest == 2) {
+        cubeGeo.onUpdate(deltaTime);
+        cubeGeo.onRender();
+        cubeGeo.onImGuiRender();
+      }
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
