@@ -33,7 +33,7 @@ ifeq ($(UNAME_S),Darwin)
 else ifeq ($(UNAME_S),Linux)
     # Linux
     LIBS = -lglfw -lGL -lm -ldl
-    RUN_CMD = __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia ./$(TARGET)
+    RUN_CMD = sh -c 'if command -v prime-run >/dev/null 2>&1; then echo "Running with dedicated GPU via prime-run"; prime-run ./$(TARGET); elif command -v nvidia-smi >/dev/null 2>&1; then echo "Running with dedicated GPU via NVIDIA offload env vars"; __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia ./$(TARGET); elif command -v glxinfo >/dev/null 2>&1 && glxinfo 2>/dev/null | grep -qi "NVIDIA"; then echo "Running with dedicated GPU via NVIDIA GLX vendor hint"; __GLX_VENDOR_LIBRARY_NAME=nvidia ./$(TARGET); elif command -v glxinfo >/dev/null 2>&1 && glxinfo 2>/dev/null | grep -Eqi "(AMD|Radeon)"; then echo "Trying dedicated GPU via DRI_PRIME=1"; DRI_PRIME=1 ./$(TARGET); else echo "Dedicated GPU launcher not detected, using fallback GPU"; ./$(TARGET); fi'
 else ifeq ($(OS),Windows_NT)
     # Windows (MINGW/MSYS)
     LIBS = -lglfw -lopengl32 -lgdi32
