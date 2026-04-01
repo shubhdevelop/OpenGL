@@ -1,4 +1,3 @@
-#include <tests/CubeGeo.hpp>
 #include <Shader.hpp>
 #include <Texture.hpp>
 #include <VertexBufferLayout.hpp>
@@ -7,6 +6,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <imgui/imgui_impl_glfw.h>
+#include <tests/CubeGeo.hpp>
 #include <tests/TestE2E.hpp>
 #include <tests/WaterEffect.hpp>
 // IMPORTANT: GLAD must come before GLFW
@@ -20,9 +20,11 @@
 #include <imgui/imgui_impl_opengl3.h>
 // GLFW needs to be after
 #include <GLFW/glfw3.h>
+#include <chrono>
 #include <stdlib.h>
 
-int main(void) {
+int main(void)
+{
   {
     Window window(960, 540, "OpenGl Window");
     window.HandleWindowResize();
@@ -52,7 +54,15 @@ int main(void) {
     test::WaterEffect waterEffect;
     test::CubeGeo CubeGeo;
 
-    while (!window.ShouldClose()) {
+    auto lastTime = std::chrono::high_resolution_clock::now();
+
+    while (!window.ShouldClose())
+    {
+      auto currentTime = std::chrono::high_resolution_clock::now();
+      float deltaTime =
+          std::chrono::duration<float>(currentTime - lastTime).count();
+      lastTime = currentTime;
+
       window.ProcessInput();
       renderer.Clear();
 
@@ -61,7 +71,7 @@ int main(void) {
       ImGui_ImplGlfw_NewFrame();
       ImGui::NewFrame();
       // waterEffect
-      CubeGeo.onUpdate(0.0f);
+      CubeGeo.onUpdate(deltaTime);
       CubeGeo.onRender();
       CubeGeo.onImGuiRender();
       ImGui::Render();

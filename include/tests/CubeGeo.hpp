@@ -20,13 +20,14 @@ public:
   virtual void onImGuiRender() override;
 
 private:
-  float m_positions[48];
+  float m_positions[192];
   unsigned int m_indexes[36];
   VertexBuffer m_vb;
   VertexArray m_va;
   IndexBuffer m_ib;
   VertexBufferLayout m_layout;
   Shader m_shader;
+  Texture m_texture;
   Renderer m_renderer;
   glm::mat4 m_proj_perspective;
   glm::mat4 m_view;
@@ -38,5 +39,6 @@ private:
   glm::vec3 m_rotationViewA;
   glm::vec2 m_Freq;
   glm::vec2 m_Amp;
+  float m_time;
 };
 }; // namespace test
