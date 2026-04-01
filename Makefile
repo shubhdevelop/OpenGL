@@ -15,15 +15,34 @@ OBJ = $(SRC:%.cpp=$(BUILD_DIR)/%.o)
 # Output
 TARGET = $(BUILD_DIR)/app
 
+# Detect OS
+UNAME_S := $(shell uname -s)
+UNAME_P := $(shell uname -p)
+
 # Flags
 CFLAGS = -Wall -Wextra -std=c++11 -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/imgui
-CFLAGS += -I/usr/include
-CFLAGS += -I/usr/local/include
+CFLAGS += -I/usr/include -I/usr/local/include
+CFLAGS += -Wno-unused-parameter
 
-# Libraries
-LIBS = -lglfw -lGL -lm -ldl
-# macOS alternative:
-# LIBS = -lglfw -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+# Platform-specific setup
+ifeq ($(UNAME_S),Darwin)
+    # macOS
+    CFLAGS += -I/opt/homebrew/include
+    LIBS = -L/opt/homebrew/lib -lglfw -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -framework Foundation
+    RUN_CMD = ./$(TARGET)
+else ifeq ($(UNAME_S),Linux)
+    # Linux
+    LIBS = -lglfw -lGL -lm -ldl
+    RUN_CMD = sh -c 'if command -v prime-run >/dev/null 2>&1; then echo "Running with dedicated GPU via prime-run"; prime-run ./$(TARGET); elif command -v nvidia-smi >/dev/null 2>&1; then echo "Running with dedicated GPU via NVIDIA offload env vars"; __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia ./$(TARGET); elif command -v glxinfo >/dev/null 2>&1 && glxinfo 2>/dev/null | grep -qi "NVIDIA"; then echo "Running with dedicated GPU via NVIDIA GLX vendor hint"; __GLX_VENDOR_LIBRARY_NAME=nvidia ./$(TARGET); elif command -v glxinfo >/dev/null 2>&1 && glxinfo 2>/dev/null | grep -Eqi "(AMD|Radeon)"; then echo "Trying dedicated GPU via DRI_PRIME=1"; DRI_PRIME=1 ./$(TARGET); else echo "Dedicated GPU launcher not detected, using fallback GPU"; ./$(TARGET); fi'
+else ifeq ($(OS),Windows_NT)
+    # Windows (MINGW/MSYS)
+    LIBS = -lglfw -lopengl32 -lgdi32
+    RUN_CMD = ./$(TARGET).exe
+else
+    # Fallback
+    LIBS = -lglfw -lGL -lm -ldl
+    RUN_CMD = ./$(TARGET)
+endif
 
 # GLAD (if included manually)
 # ensure glad.c is compiled as part of SRC
@@ -47,6 +66,6 @@ clean:
 
 # Run
 run: all
-	__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia ./$(TARGET)
+	$(RUN_CMD)
 
 .PHONY: all clean run
