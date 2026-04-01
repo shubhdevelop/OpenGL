@@ -1,13 +1,14 @@
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <imgui/imgui_impl_glfw.h>
-#include <tests/WaterEffect.hpp>
 #include <Shader.hpp>
 #include <Texture.hpp>
 #include <VertexBufferLayout.hpp>
 #include <Window.hpp>
 #include <glad/glad.h>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <imgui/imgui_impl_glfw.h>
+#include <tests/CubeGeo.hpp>
 #include <tests/TestE2E.hpp>
+#include <tests/WaterEffect.hpp>
 // IMPORTANT: GLAD must come before GLFW
 #include <IndexBuffer.hpp>
 #include <Renderer.hpp>
@@ -19,9 +20,11 @@
 #include <imgui/imgui_impl_opengl3.h>
 // GLFW needs to be after
 #include <GLFW/glfw3.h>
+#include <chrono>
 #include <stdlib.h>
 
-int main(void) {
+int main(void)
+{
   {
     Window window(960, 540, "OpenGl Window");
     window.HandleWindowResize();
@@ -29,6 +32,7 @@ int main(void) {
 
     // Enable GL_BLENDING
     GLCall(glEnable(GL_BLEND));
+    GLCall(glEnable(GL_DEPTH_TEST));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
     Renderer renderer;
@@ -48,8 +52,19 @@ int main(void) {
 
     test::TestE2E e2eTest;
     test::WaterEffect waterEffect;
+    test::CubeGeo cubeGeo;
 
-    while (!window.ShouldClose()) {
+    int currentTest = 2; // 0=E2E, 1=Water, 2=Cube
+
+    auto lastTime = std::chrono::high_resolution_clock::now();
+
+    while (!window.ShouldClose())
+    {
+      auto currentTime = std::chrono::high_resolution_clock::now();
+      float deltaTime =
+          std::chrono::duration<float>(currentTime - lastTime).count();
+      lastTime = currentTime;
+
       window.ProcessInput();
       renderer.Clear();
 
@@ -57,10 +72,25 @@ int main(void) {
       ImGui_ImplOpenGL3_NewFrame();
       ImGui_ImplGlfw_NewFrame();
       ImGui::NewFrame();
-      // waterEffect
-      waterEffect.onUpdate(0.0f);
-      waterEffect.onRender();
-      waterEffect.onImGuiRender();
+
+      ImGui::Begin("Test Selector");
+      const char* items[] = { "E2E Test", "Water Effect", "Cube Geo" };
+      ImGui::Combo("Select Test", &currentTest, items, 3);
+      ImGui::End();
+
+      renderer.Clear();
+
+      if (currentTest == 0) {
+        e2eTest.onRender();
+        e2eTest.onImGuiRender();
+      } else if (currentTest == 1) {
+        waterEffect.onRender();
+        waterEffect.onImGuiRender();
+      } else if (currentTest == 2) {
+        cubeGeo.onUpdate(deltaTime);
+        cubeGeo.onRender();
+        cubeGeo.onImGuiRender();
+      }
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

@@ -14,10 +14,10 @@
 namespace test {
 WaterEffect::WaterEffect()
       : m_positions{
-            -200.0f, -200.0f, 0.0f, 0.0f, // bottom left
-            200.0f, -200.0f, 1.0f, 0.0f,  // bottom right
-            200.0f, 200.0f, 1.0f, 1.0f,   // top
-            -200.0f, 200.0f, 0.0f, 1.0f   // top left
+            -0.9f, -0.9f, 0.0f, 0.0f, // bottom left
+             0.9f, -0.9f, 1.0f, 0.0f,  // bottom right
+             0.9f,  0.9f, 1.0f, 1.0f,   // top
+            -0.9f,  0.9f, 0.0f, 1.0f   // top left
         },
         m_indexes{0, 1, 2, 2, 3, 0},
         m_vb(m_positions, 4 * 4 * sizeof(float)),
@@ -31,7 +31,9 @@ WaterEffect::WaterEffect()
   m_layout.Push<float>(2);
   m_va.AddBuffer(m_vb, m_layout);
 
-  m_proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+  GLCall(glEnable(GL_DEPTH_TEST));
+
+  m_proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 
   m_shader.Bind();
 
@@ -73,8 +75,8 @@ void WaterEffect::onRender() {
 
 void WaterEffect::onImGuiRender() {
   ImGui::Begin("Water Effect!");
-  ImGui::SliderFloat3("ViewTransaltion", &m_translationViewA.x, 0.0f, 960.0f);
-  ImGui::SliderFloat3("ModelTranslation", &m_translationModelA.x, 0.0f, 960.0f);
+  ImGui::SliderFloat3("ViewTransaltion", &m_translationViewA.x, -1.0f, 1.0f);
+  ImGui::SliderFloat3("ModelTranslation", &m_translationModelA.x, -1.0f, 1.0f);
   ImGui::SliderFloat2("Water Frequency", &m_Freq.x, 0.0f, 100.0f);
   ImGui::SliderFloat2("Water Amplititude", &m_Amp.x, 0.0f, 2.0f);
   ImGui::End();

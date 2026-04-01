@@ -18,9 +18,6 @@ void main()
     vec3 pos = position.xyz;
 
     float time = u_Time;
-    //wave
-    pos.y += sin(pos.x*2.0 + time) * 2;
-    pos.y += cos(pos.z*2.0 + time) * 2;
 
     // MVP translation
     vec4 final = u_Proj * u_View * u_Model * vec4(pos, 1.0);
