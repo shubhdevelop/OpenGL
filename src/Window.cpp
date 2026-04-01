@@ -44,7 +44,10 @@ Window::Window(unsigned int width, unsigned int height, const char *title) {
     return;
   }
   
-  GLCall(glViewport(0, 0, Wwidth, Wheight));
+  int framebufferWidth = 0;
+  int framebufferHeight = 0;
+  glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+  GLCall(glViewport(0, 0, framebufferWidth, framebufferHeight));
   std::cout << "initializing window!!" << std::endl;
 }
 
