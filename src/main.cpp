@@ -1,6 +1,7 @@
-#include "glm/ext/matrix_clip_space.hpp"
-#include "glm/ext/matrix_transform.hpp"
-#include "imgui/imgui_impl_glfw.h"
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <imgui/imgui_impl_glfw.h>
+#include <tests/WaterEffect.hpp>
 #include <Shader.hpp>
 #include <Texture.hpp>
 #include <VertexBufferLayout.hpp>
@@ -46,6 +47,7 @@ int main(void) {
     ImGui::StyleColorsDark();
 
     test::TestE2E e2eTest;
+    test::WaterEffect waterEffect;
 
     while (!window.ShouldClose()) {
       window.ProcessInput();
@@ -55,9 +57,10 @@ int main(void) {
       ImGui_ImplOpenGL3_NewFrame();
       ImGui_ImplGlfw_NewFrame();
       ImGui::NewFrame();
-      e2eTest.onUpdate(0.0f);
-      e2eTest.onRender();
-      e2eTest.onImGuiRender();
+      // waterEffect
+      waterEffect.onUpdate(0.0f);
+      waterEffect.onRender();
+      waterEffect.onImGuiRender();
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
