@@ -54,6 +54,7 @@ void WaterEffect::onUpdate(float deltaTime) {};
 void WaterEffect::onRender(glm::mat4 view, glm::mat4 projection) {
 
   m_shader.Bind();
+  m_texture.Bind(0);
 
   {
 
