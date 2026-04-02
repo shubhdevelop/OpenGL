@@ -16,7 +16,7 @@ public:
 
   virtual void onUpdate(float deltaTime) override;
 
-  virtual void onRender() override;
+  virtual void onRender(glm::mat4 view, glm::mat4 projection) override;
   virtual void onImGuiRender() override;
 
 private:
@@ -29,10 +29,8 @@ private:
   Shader m_shader;
   Texture m_texture;
   Renderer m_renderer;
-  glm::mat4 m_proj;
-  glm::mat4 m_view;
+
   glm::mat4 m_model;
-  glm::vec3 m_translationViewA;
   glm::vec3 m_translationModelA;
   glm::vec2 m_Freq;
   glm::vec2 m_Amp;
