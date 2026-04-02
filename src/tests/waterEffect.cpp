@@ -33,7 +33,6 @@ WaterEffect::WaterEffect()
 
   GLCall(glEnable(GL_DEPTH_TEST));
 
-  m_proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 
   m_shader.Bind();
 
@@ -46,24 +45,22 @@ WaterEffect::WaterEffect()
   m_shader.UnBind();
 
   m_translationModelA = glm::vec3(0, 0, 0);
-  m_translationViewA = glm::vec3(0, 0, 0);
 };
 
 WaterEffect::~WaterEffect() {};
 
 void WaterEffect::onUpdate(float deltaTime) {};
 
-void WaterEffect::onRender() {
+void WaterEffect::onRender(glm::mat4 view, glm::mat4 projection) {
 
   m_shader.Bind();
 
   {
 
-    m_view = glm::translate(glm::mat4(1.0f), m_translationViewA);
     m_model = glm::translate(glm::mat4(1.0f), m_translationModelA);
 
-    m_shader.SetUniformMat4f("u_Proj", m_proj);
-    m_shader.SetUniformMat4f("u_View", m_view);
+    m_shader.SetUniformMat4f("u_Proj", projection);
+    m_shader.SetUniformMat4f("u_View", view);
     m_shader.SetUniformMat4f("u_Model", m_model);
 
     m_shader.SetUniform1f("u_Time", glfwGetTime());
@@ -75,7 +72,6 @@ void WaterEffect::onRender() {
 
 void WaterEffect::onImGuiRender() {
   ImGui::Begin("Water Effect!");
-  ImGui::SliderFloat3("ViewTransaltion", &m_translationViewA.x, -1.0f, 1.0f);
   ImGui::SliderFloat3("ModelTranslation", &m_translationModelA.x, -1.0f, 1.0f);
   ImGui::SliderFloat2("Water Frequency", &m_Freq.x, 0.0f, 100.0f);
   ImGui::SliderFloat2("Water Amplititude", &m_Amp.x, 0.0f, 2.0f);
