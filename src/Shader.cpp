@@ -3,6 +3,7 @@
 #include <Shader.hpp>
 #include <cstring>
 #include <iostream>
+#include <unordered_set>
 
 // "resource/shaders/Basic.shader"
 Shader::Shader(const char *filepath) {
@@ -20,10 +21,12 @@ unsigned int Shader::GetUniformLocation(const char *name) const {
   if (it != m_uniformLocationCache.end())
     return it->second;
   GLCall(int location = glGetUniformLocation(m_rendererId, name));
+  static std::unordered_set<std::string> warned;
   if (location == -1) {
-    std::cout << "Warning: uniform: " << name << "doesn't exist";
-  } else {
-    m_uniformLocationCache[name] = location;
+    if (warned.find(name) == warned.end()) {
+      std::cout << "Warning: uniform: " << name << " doesn't exist" << std::endl;
+      warned.insert(name);
+    }
   }
   return location;
 };
@@ -40,6 +43,10 @@ void Shader::SetUniform1i(const char *name, int v0) const {
 void Shader::SetUniform1f(const char *name, float v0) const
 {
   GLCall(glUniform1f(GetUniformLocation(name), v0));
+};
+
+void Shader::SetUniform3f(const char *name, float v0, float v1, float v2) const {
+  GLCall(glUniform3f(GetUniformLocation(name), v0, v1, v2));
 };
 
 void Shader::SetUniformMat4f(const char *name, const glm::mat4 &matrix) const {

@@ -26,6 +26,7 @@ public:
                     float v3) const;
   void SetUniform1i(const char *name, int v0) const;
   void SetUniform1f(const char *name, float v0) const;
+  void SetUniform3f(const char *name, float v0, float v1, float v2) const;
   void SetUniformMat4f(const char *name, const glm::mat4 &matrix) const;
   unsigned int GetUniformLocation(const char *name) const;
 
