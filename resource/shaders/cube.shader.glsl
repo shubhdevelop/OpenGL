@@ -10,6 +10,7 @@ out vec3 v_Color;
 uniform mat4 u_Proj;
 uniform mat4 u_View;
 uniform mat4 u_Model;
+uniform float u_Time;
 
 void main()
 {

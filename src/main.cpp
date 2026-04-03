@@ -1,3 +1,4 @@
+#include "tests/CubeWithLighting.hpp"
 #include <Camera.hpp>
 #include <Texture.hpp>
 #include <VertexBufferLayout.hpp>
@@ -78,13 +79,17 @@ int main(void) {
     ImGui::StyleColorsDark();
 
     glfwSetCursorPosCallback(window.getWindow(), mouse_callback);
-    glfwSetMouseButtonCallback(window.getWindow(), ImGui_ImplGlfw_MouseButtonCallback);
+    glfwSetMouseButtonCallback(window.getWindow(),
+                               ImGui_ImplGlfw_MouseButtonCallback);
     glfwSetScrollCallback(window.getWindow(), scroll_callback);
 
     glfwSetKeyCallback(window.getWindow(), [](GLFWwindow *w, int key,
                                               int scancode, int action,
                                               int mods) {
       ImGui_ImplGlfw_KeyCallback(w, key, scancode, action, mods);
+      ImGuiIO &io = ImGui::GetIO();
+      if (io.WantCaptureKeyboard)
+        return;
       auto &camera = Camera::getInstance();
       camera.setKeyState(key, action == GLFW_PRESS || action == GLFW_REPEAT);
     });
@@ -93,8 +98,9 @@ int main(void) {
     test::WaterEffect waterEffect;
     test::CubeGeo cubeGeo;
     test::CUbeWithCamera cubeWithCamera;
+    test::CubeWithLighting cubeWithLighting;
 
-    int currentTest = 3; // 0=E2E, 1=Water, 2=Cube, 3=CubeWithCamera
+    int currentTest = 4; // 0=E2E, 1=Water, 2=Cube, 3=CubeWithCamera
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 
@@ -114,8 +120,8 @@ int main(void) {
 
       ImGui::Begin("Test Selector");
       const char *items[] = {"E2E Test", "Water Effect", "Cube Geo",
-                             "Cube With Camera"};
-      ImGui::Combo("Select Test", &currentTest, items, 4);
+                             "Cube With Camera", "Cube With Lighting"};
+      ImGui::Combo("Select Test", &currentTest, items, 5);
 
       auto &camera = Camera::getInstance();
 
@@ -164,6 +170,11 @@ int main(void) {
         cubeWithCamera.onRender(camera.getViewMatrix(),
                                 camera.getProjectionMatrix(960.0f / 540.0f));
         cubeWithCamera.onImGuiRender();
+      } else if (currentTest == 4) {
+        cubeWithLighting.onUpdate(deltaTime);
+        cubeWithLighting.onRender(camera.getViewMatrix(),
+                                  camera.getProjectionMatrix(960.0f / 540.0f));
+        cubeWithLighting.onImGuiRender();
       }
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
