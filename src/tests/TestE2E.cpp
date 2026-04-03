@@ -28,8 +28,6 @@ TestE2E::TestE2E()
 
   GLCall(glEnable(GL_DEPTH_TEST));
 
-  m_proj = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-
   m_shader.Bind();
 
   m_texture.Bind(0);
@@ -41,32 +39,29 @@ TestE2E::TestE2E()
   m_shader.UnBind();
 
   m_translationModelA = glm::vec3(0, 0, 0);
-  m_translationViewA = glm::vec3(0, 0, 0);
 };
 
 TestE2E::~TestE2E() {};
 
 void TestE2E::onUpdate(float deltaTime) {};
 
-void TestE2E::onRender() {
+void TestE2E::onRender(glm::mat4 view, glm::mat4 projection)
+{
 
   m_shader.Bind();
+  m_texture.Bind(0);
 
-  {
+  m_model = glm::translate(glm::mat4(1.0f), m_translationModelA);
 
-    m_view = glm::translate(glm::mat4(1.0f), m_translationViewA);
-    m_model = glm::translate(glm::mat4(1.0f), m_translationModelA);
-
-    m_shader.SetUniformMat4f("u_Proj", m_proj);
-    m_shader.SetUniformMat4f("u_View", m_view);
-    m_shader.SetUniformMat4f("u_Model", m_model);
-    m_renderer.Draw(m_va, m_ib, m_shader);
-  }
+  m_shader.SetUniformMat4f("u_Proj", projection);
+  m_shader.SetUniformMat4f("u_View", view);
+  m_shader.SetUniformMat4f("u_Model", m_model);
+  m_shader.SetUniform1i("u_Texture", 0);
+  m_renderer.Draw(m_va, m_ib, m_shader);
 };
 
 void TestE2E::onImGuiRender() {
   ImGui::Begin("Object 1");
-  ImGui::SliderFloat3("ViewTransaltion", &m_translationViewA.x, -1.0f, 1.0f);
   ImGui::SliderFloat3("ModelTranslation", &m_translationModelA.x, -1.0f, 1.0f);
   ImGui::End();
 };

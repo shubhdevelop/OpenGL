@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Renderer.hpp"
 #include <IndexBuffer.hpp>
-#include <Renderer.hpp>
 #include <Shader.hpp>
 #include <Texture.hpp>
 #include <VertexArray.hpp>
@@ -9,10 +9,10 @@
 #include <tests/test.hpp>
 
 namespace test {
-class WaterEffect : public Test {
+class Heart : public Test {
 public:
-  WaterEffect();
-  virtual ~WaterEffect();
+  Heart();
+  virtual ~Heart();
 
   virtual void onUpdate(float deltaTime) override;
 
@@ -20,19 +20,26 @@ public:
   virtual void onImGuiRender() override;
 
 private:
-  float m_positions[16];
-  unsigned int m_indexes[6];
   VertexBuffer m_vb;
   VertexArray m_va;
   IndexBuffer m_ib;
   VertexBufferLayout m_layout;
   Shader m_shader;
-  Texture m_texture;
+  Shader m_LightShader;
   Renderer m_renderer;
-
   glm::mat4 m_model;
+  glm::mat4 m_rotation;
   glm::vec3 m_translationModelA;
-  glm::vec2 m_Freq;
-  glm::vec2 m_Amp;
+  glm::vec3 m_rotationModelA;
+  glm::vec3 m_translationModelLight;
+  glm::vec3 m_rotationModelLight;
+  glm::vec3 m_scaleModelA;
+  glm::vec3 m_scaleModelLight;
+  glm::vec4 m_LightColor;
+  glm::vec4 m_objectColor;
+  float m_time;
+  float m_ambient;
+  float m_specularStrength;
+  float m_wobbleAmplitude;
 };
 }; // namespace test

@@ -49,4 +49,4 @@ void main()
     uv.y += cos(uv.x * u_Freq_Amp.y + time) * u_Freq_Amp.w;
     vec4 texColor = texture(u_Texture, uv);
     color = texColor;
-};
+}

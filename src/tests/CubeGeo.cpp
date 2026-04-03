@@ -70,9 +70,6 @@ namespace test
 
   GLCall(glEnable(GL_DEPTH_TEST));
 
-  m_proj_perspective =
-      glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-
   m_shader.Bind();
 
   m_va.Unbind();
@@ -81,9 +78,7 @@ namespace test
   m_shader.UnBind();
 
   m_translationModelA = glm::vec3(0, 0, 0);
-  m_translationViewA = glm::vec3(0, 0, 0);
   m_rotationModelA = glm::vec3(0, 0, 0);
-  m_rotationViewA = glm::vec3(0, 0, 0);
   m_rotation = glm::mat4(1.0f);
   m_Freq = glm::vec2(1.0f, 1.0f);
   m_Amp = glm::vec2(0.1f, 0.1f);
@@ -97,7 +92,7 @@ namespace test
     m_time += deltaTime;
   };
 
-  void CubeGeo::onRender()
+  void CubeGeo::onRender(glm::mat4 view, glm::mat4 projection)
   {
     m_shader.Bind();
     m_texture.Bind();
@@ -108,25 +103,14 @@ namespace test
                                 glm::vec3(0.0f, 1.0f, 0.0f));
     modelRotation = glm::rotate(modelRotation, glm::radians(m_rotationModelA.z),
                                 glm::vec3(0.0f, 0.0f, 1.0f));
-
-    glm::mat4 viewRotation =
-        glm::rotate(glm::mat4(1.0f), glm::radians(m_rotationViewA.x),
-                    glm::vec3(1.0f, 0.0f, 0.0f));
-    viewRotation = glm::rotate(viewRotation, glm::radians(m_rotationViewA.y),
-                               glm::vec3(0.0f, 1.0f, 0.0f));
-    viewRotation = glm::rotate(viewRotation, glm::radians(m_rotationViewA.z),
-                               glm::vec3(0.0f, 0.0f, 1.0f));
-
     {
-      m_view = glm::translate(glm::mat4(1.0f), m_translationViewA);
-      m_view = m_view * viewRotation;
       m_model = glm::mat4(1.0f);
       m_model = glm::translate(m_model, m_translationModelA);
       m_model = m_model * modelRotation;
 
       m_shader.SetUniform1i("u_Texture", 0);
-      m_shader.SetUniformMat4f("u_Proj", m_proj_perspective);
-      m_shader.SetUniformMat4f("u_View", m_view);
+      m_shader.SetUniformMat4f("u_Proj", projection);
+      m_shader.SetUniformMat4f("u_View", view);
       m_shader.SetUniformMat4f("u_Model", m_model);
       m_shader.SetUniform1f("u_Time", m_time);
       m_shader.SetUniform4f("u_Freq_Amp", m_Freq.x, m_Freq.y, m_Amp.x, m_Amp.y);
@@ -136,10 +120,7 @@ namespace test
 
   void CubeGeo::onImGuiRender()
   {
-    ImGui::Begin("Object 1");
-    ImGui::SliderFloat3("View Translation", &m_translationViewA.x, -50.0f, 1.0f);
-    ImGui::SliderFloat3("View Rotation", &m_rotationViewA.x, -180.0f, 180.0f);
-    ImGui::Separator();
+    ImGui::Begin("Model 1");
     ImGui::SliderFloat3("Model Translation", &m_translationModelA.x, -1.0f, 1.0f);
     ImGui::SliderFloat3("Model Rotation", &m_rotationModelA.x, -180.0f, 180.0f);
     ImGui::Separator();
