@@ -1,4 +1,4 @@
-#include "tests/CubeWithLighting.hpp"
+#include "tests/Heart.hpp"
 #include <Camera.hpp>
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
@@ -8,175 +8,16 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+namespace {
+#include "heart_mesh_generated.inc"
+}
+
 namespace test {
-CubeWithLighting::CubeWithLighting()
+Heart::Heart()
     : Test(),
-      m_positions{
-          // Front face (normals pointing +Z)
-          -1.0f,
-          -1.0f,
-          1.0f,
-          0.0f,
-          0.0f,
-          1.0f,
-          1.0f,
-          -1.0f,
-          1.0f,
-          0.0f,
-          0.0f,
-          1.0f,
-          1.0f,
-          1.0f,
-          1.0f,
-          0.0f,
-          0.0f,
-          1.0f,
-          -1.0f,
-          1.0f,
-          1.0f,
-          0.0f,
-          0.0f,
-          1.0f,
-          // Back face (normals pointing -Z)
-          -1.0f,
-          -1.0f,
-          -1.0f,
-          0.0f,
-          0.0f,
-          -1.0f,
-          1.0f,
-          -1.0f,
-          -1.0f,
-          0.0f,
-          0.0f,
-          -1.0f,
-          1.0f,
-          1.0f,
-          -1.0f,
-          0.0f,
-          0.0f,
-          -1.0f,
-          -1.0f,
-          1.0f,
-          -1.0f,
-          0.0f,
-          0.0f,
-          -1.0f,
-          // Top face (normals pointing +Y)
-          -1.0f,
-          1.0f,
-          1.0f,
-          0.0f,
-          1.0f,
-          0.0f,
-          1.0f,
-          1.0f,
-          1.0f,
-          0.0f,
-          1.0f,
-          0.0f,
-          1.0f,
-          1.0f,
-          -1.0f,
-          0.0f,
-          1.0f,
-          0.0f,
-          -1.0f,
-          1.0f,
-          -1.0f,
-          0.0f,
-          1.0f,
-          0.0f,
-          // Bottom face (normals pointing -Y)
-          -1.0f,
-          -1.0f,
-          1.0f,
-          0.0f,
-          -1.0f,
-          0.0f,
-          1.0f,
-          -1.0f,
-          1.0f,
-          0.0f,
-          -1.0f,
-          0.0f,
-          1.0f,
-          -1.0f,
-          -1.0f,
-          0.0f,
-          -1.0f,
-          0.0f,
-          -1.0f,
-          -1.0f,
-          -1.0f,
-          0.0f,
-          -1.0f,
-          0.0f,
-          // Right face (normals pointing +X)
-          1.0f,
-          -1.0f,
-          1.0f,
-          1.0f,
-          0.0f,
-          0.0f,
-          1.0f,
-          -1.0f,
-          -1.0f,
-          1.0f,
-          0.0f,
-          0.0f,
-          1.0f,
-          1.0f,
-          -1.0f,
-          1.0f,
-          0.0f,
-          0.0f,
-          1.0f,
-          1.0f,
-          1.0f,
-          1.0f,
-          0.0f,
-          0.0f,
-          // Left face (normals pointing -X)
-          -1.0f,
-          -1.0f,
-          1.0f,
-          -1.0f,
-          0.0f,
-          0.0f,
-          -1.0f,
-          -1.0f,
-          -1.0f,
-          -1.0f,
-          0.0f,
-          0.0f,
-          -1.0f,
-          1.0f,
-          -1.0f,
-          -1.0f,
-          0.0f,
-          0.0f,
-          -1.0f,
-          1.0f,
-          1.0f,
-          -1.0f,
-          0.0f,
-          0.0f,
-      },
-      m_indexes{// Front face
-                0, 1, 2, 2, 3, 0,
-                // Back face
-                4, 5, 6, 6, 7, 4,
-                // Top face
-                8, 9, 10, 10, 11, 8,
-                // Bottom face
-                12, 13, 14, 14, 15, 12,
-                // Right face
-                16, 17, 18, 18, 19, 16,
-                // Left face
-                20, 21, 22, 22, 23, 20},
-      m_vb(m_positions, 24 * 6 * sizeof(float)), m_ib(m_indexes, 36),
-      m_shader("resource/shaders/cubeWithLighting.shader.glsl"),
+      m_vb(kHeartPositions, kHeartFloatCount * sizeof(float)),
+      m_ib(kHeartIndices, kHeartIndexCount),
+      m_shader("resource/shaders/Heart.shader.glsl"),
       m_LightShader("resource/shaders/Light.shader.glsl"), m_renderer(),
       m_LightColor(1.0f, 1.0f, 1.0f, 1.0f),
       m_objectColor(1.0f, 0.5f, 0.3f, 1.0f) {
@@ -206,13 +47,14 @@ CubeWithLighting::CubeWithLighting()
   m_scaleModelLight = glm::vec3(1.0f, 1.0f, 1.0f);
   m_ambient = 0.1f;
   m_specularStrength = 0.5f;
+  m_wobbleAmplitude = 0.08f;
 };
 
-CubeWithLighting::~CubeWithLighting() {};
+Heart::~Heart() {};
 
-void CubeWithLighting::onUpdate(float deltaTime) { m_time += deltaTime; };
+void Heart::onUpdate(float deltaTime) { m_time += deltaTime; };
 
-void CubeWithLighting::onRender(glm::mat4 view, glm::mat4 projection) {
+void Heart::onRender(glm::mat4 view, glm::mat4 projection) {
   GLCall(glEnable(GL_DEPTH_TEST));
   glm::mat4 modelRotation =
       glm::rotate(glm::mat4(1.0f), glm::radians(m_rotationModelA.x),
@@ -252,6 +94,7 @@ void CubeWithLighting::onRender(glm::mat4 view, glm::mat4 projection) {
     glm::vec3 cameraPos = Camera::getInstance().getPosition();
     m_shader.SetUniform3f("u_ViewPos", cameraPos.x, cameraPos.y, cameraPos.z);
     m_shader.SetUniform1f("u_SpecularStrength", m_specularStrength);
+    m_shader.SetUniform1f("u_WobbleAmplitude", m_wobbleAmplitude);
     m_renderer.Draw(m_va, m_ib, m_shader);
 
     m_LightShader.Bind();
@@ -268,11 +111,12 @@ void CubeWithLighting::onRender(glm::mat4 view, glm::mat4 projection) {
   }
 };
 
-void CubeWithLighting::onImGuiRender() {
+void Heart::onImGuiRender() {
   ImGui::Begin("Settings");
   ImGui::Text("Global Settings");
   ImGui::SliderFloat("Ambient Light", &m_ambient, -1.0f, 1.0f);
   ImGui::SliderFloat("Specular Strength", &m_specularStrength, 0.0f, 1.0f);
+  ImGui::SliderFloat("Wobble Amplitude", &m_wobbleAmplitude, 0.0f, 0.5f);
   ImGui::Separator();
   ImGui::Text("Light Color Transfomation");
   ImGui::SliderFloat3("Model Translation", &m_translationModelA.x, -10.0f,

@@ -1,4 +1,5 @@
 #include "tests/CubeWithLighting.hpp"
+#include "tests/Heart.hpp"
 #include <Camera.hpp>
 #include <Texture.hpp>
 #include <VertexBufferLayout.hpp>
@@ -99,8 +100,9 @@ int main(void) {
     test::CubeGeo cubeGeo;
     test::CUbeWithCamera cubeWithCamera;
     test::CubeWithLighting cubeWithLighting;
+    test::Heart heart;
 
-    int currentTest = 4; // 0=E2E, 1=Water, 2=Cube, 3=CubeWithCamera
+    int currentTest = 5; // 0=E2E, 1=Water, 2=Cube, 3=CubeWithCamera, 4=CubeWithLighting, 5=Heart
 
     auto lastTime = std::chrono::high_resolution_clock::now();
 
@@ -120,7 +122,7 @@ int main(void) {
 
       ImGui::Begin("Test Selector");
       const char *items[] = {"E2E Test", "Water Effect", "Cube Geo",
-                             "Cube With Camera", "Cube With Lighting"};
+                             "Cube With Camera", "Cube With Lighting", "Heart"};
       ImGui::Combo("Select Test", &currentTest, items, 5);
 
       auto &camera = Camera::getInstance();
@@ -175,6 +177,11 @@ int main(void) {
         cubeWithLighting.onRender(camera.getViewMatrix(),
                                   camera.getProjectionMatrix(960.0f / 540.0f));
         cubeWithLighting.onImGuiRender();
+      } else if (currentTest == 5) {
+        heart.onUpdate(deltaTime);
+        heart.onRender(camera.getViewMatrix(),
+                       camera.getProjectionMatrix(960.0f / 540.0f));
+        heart.onImGuiRender();
       }
       ImGui::Render();
       ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
